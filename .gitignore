@@ -11,7 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-
+# env files (API keys, secrets
 .env
 
 # Editor directories and files

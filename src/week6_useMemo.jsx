@@ -1,0 +1,123 @@
+// import { useState } from "react";
+// import {useMemo} from "react";
+
+// // In this assignment, your task is to create a component that performs an expensive calculation (finding the factorial) based on a user input. 
+// // Use useMemo to ensure that the calculation is only recomputed when the input changes, not on every render.
+
+// export function Assignment1() {
+//     const [input, setInput] = useState(0);
+//     // Your solution starts here
+//     const expensiveValue =useMemo(()=>{
+//       let value=1;
+//       for(let i=1;i<=input;i++){
+//         value = value*i;
+//       }
+//       return value;
+//     },[input])
+
+//     // Your solution ends here
+
+//     return (
+//         <div>
+//             <input 
+//                 type="number" 
+//                 value={input} 
+//                 onChange={(e) => setInput(Number(e.target.value))} 
+//             />
+//             <p>Calculated Value: {expensiveValue}</p>
+//         </div>
+//     );
+// }
+
+// export default Assignment1
+
+
+
+
+
+// import React, { useEffect, useState } from "react";
+// import {useMemo} from "react";
+
+
+// // In this assignment, you will create a component that renders a large list of sentences and includes an input field for filtering these items. 
+// // The goal is to use useMemo to optimize the filtering process, ensuring the list is only re-calculated when necessary (e.g., when the filter criteria changes).
+// // You will learn something new here, specifically how you have to pass more than one value in the dependency array
+
+// const words = ["hi", "my", "name", "is", "for", "to", "random", "word" ];
+// const TOTAL_LINES = 1000;
+// const ALL_WORDS = [];
+// for (let i = 0; i < TOTAL_LINES; i++) {
+//     let sentence = "";
+//     for (let j = 0; j < words.length; j++) {
+//         sentence += (words[Math.floor(words.length * Math.random())])
+//         sentence += " "
+//     }
+//     ALL_WORDS.push(sentence);
+// }
+// export function Assignment2() {
+//     const [sentences, setSentences] = useState(ALL_WORDS);
+//     const [filter, setFilter] = useState("");
+
+//     const expensiveValue = useMemo(()=>{
+//     const filteredSentences = sentences.filter(x => x.includes(filter))
+
+// return filteredSentences;
+//   },[sentences,filter])
+
+//     return <div>
+//         <input type="text" onChange={(e) => {
+//             setFilter(e.target.value)
+//         }}></input> 
+//           {expensiveValue.map((word,index) => <div key={index}>
+//              {word}
+//         </div>)}
+//     </div>
+// }
+// export default Assignment2
+
+
+
+//Assignment 3 
+
+import {useState} from "react"
+import {useMemo} from "react"
+
+
+
+// You have been given a list of items you shopped from the grocery store
+// You need to calculate the total amount of money you spent
+
+function App(){
+  const [items,setItems] = useState ([
+    {name :"Choclate",value:20},
+    {name:"Ice cream",value :30},
+    {name:"Drinks",value:40},
+    {name:"Lemon",value :10},
+    {name:"VODKA",value:24},
+    {name:"idk what to do",value:12}
+  ]);
+//start
+
+
+const calculation = useMemo(()=>{
+let values = 0;
+
+for (let i=0;i<items.length;i++){
+values = values + items[i].value
+}
+return values
+},[items])
+
+  return (
+    <div>
+      <ul>
+        {items.map((item,index) =>(
+          <li key={index}>{item.name}   - Price:${item.value}</li>
+        ))}
+      </ul>
+      <p>Total Value $:{calculation}</p>
+    </div>
+  )
+}
+
+export default App
