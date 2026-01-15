@@ -122,84 +122,171 @@
 // // City suggestions
 
 
+// import {useRef} from "react"
+// import {useState} from "react"
+
+// function App (){
+//   const countRef = useRef(0);
+//   const [count,setCount] = useState(0)
+//   function Increment(){
+//     countRef.current++;
+//     setCount(prev=>prev+1)
+//     console.log("Count ref:",countRef)
+//     console.log("SetCount val ",count)
+
+//   }
+//   return (
+//     <div>
+//       <p>
+//         CountRef is : {countRef.current}
+//       </p>
+//       <p>
+//         State count is :{count}
+//       </p>
+//       <button onClick = {Increment}> Increament button </button>
+//     </div>
+//   )
+// }
+
+// export default App 
 
 
-
-
-// import { useState } from "react";
-// import {useCallback } from "react"
-
-// // Create a counter component with increment and decrement functions. Pass these functions to a child component which has buttons to perform the increment and decrement actions. Use useCallback to ensure that these functions are not recreated on every render.
+// import {useState} from "react"
+// import {useRef} from "react"
+// import {useEffect} from "react"
+// // Create a component with a text input field and a button. When the component mounts or the button is clicked, automatically focus the text input field using useRef.
 
 // export function Assignment1() {
-//     const [count, setCount] = useState(0);
+//   const inputRef = useRef();
+//     useEffect(() => {
+// inputRef.current.focus()
+//     }, [inputRef]);
 
-//     // Your code starts here
+//     const handleButtonClick = () => {
+//       inputRef.current.focus()
 
-// const Increment =  useCallback(()=>{
-// setCount(prev => prev+1)
+//     };
 
-// },[])
-
-// const Decrement = useCallback (()=>{
-// setCount(prev =>prev-1)
-    
-// },[])
-    
-//     // Your code ends here
-
-// return (
+//     return (
 //         <div>
-//             <p>Count: {count}</p>
-//             <CounterButtons onIncrement={Increment} onDecrement={Decrement} />
+//             <input ref={inputRef} type="text" placeholder="Enter text here" />
+//             <button onClick={handleButtonClick}>Focus Input</button>
 //         </div>
 //     );
 // };
 
-// const CounterButtons = ({ onIncrement, onDecrement }) => (
-//     <div>
-//         <button onClick={onIncrement}>Increment</button>
-//         <button onClick={onDecrement}>Decrement</button>
-//     </div>
-// );
-
 // export default Assignment1
 
 
+// import React, { useState, useCallback } from 'react';
+// import {useRef} from "react"
+// // Create a component that tracks and displays the number of times it has been rendered. Use useRef to create a variable that persists across renders without causing additional renders when it changes.
+
+// export function Assignment2() {
+//     const [count,setCount] = useState(0);
+//     const mathRef =  useRef(0);
 
 
-import React, { useState, useCallback } from 'react';
-
-
-// Create a component with a text input field and a button. The goal is to display an alert with the text entered when the button is clicked. Use useCallback to memoize the event handler function that triggers the alert, ensuring it's not recreated on every render.
-// Currently we only have inputText as a state variable and hence you might not see the benefits of 
-// useCallback. We're also not passing it down to another component as a prop which is another reason for you to not see it's benefits immedietely.
-
-export function Assignment2() {
-    const [inputText, setInputText] = useState('');
-
-    // Your code starts here
-    const showAlert = useCallback(()=>{
-    window.alert(inputText)
-    },[inputText])
   
-    // Your code ends here
+//     const handleReRender = () => {
+//         // Update state to force re-render
+//         setCount(prev=>prev+1)
+//     };
+//     mathRef.current = mathRef.current+1;
 
-    return (
-        <div>
-            <input
-                type="text"
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                placeholder="Enter some text"
-            />
-            <Alert showAlert={showAlert} />
+//     return (
+//         <div>
+//             <p>This component has rendered {mathRef.current} times.</p>
+//             <button onClick={handleReRender}>Force Re-render</button>
+//         </div>
+//     );
+// };
+
+// export default Assignment2 
+
+import {useState} from "react"
+import {useRef} from "react"
+import {useEffect} from "react"
+import {useMemo} from "react"
+
+function App(){
+    const [products,setProducts] =  useState([])
+const [search,setSearch] = useState("")
+const [category,setCategory] = useState("all")
+const [sortOrder,setsortOrder] = useState("none")
+const searchInputRef = useRef(null)
+const redcerCountRef =useRef(0)
+redcerCountRef.current+=1
+
+useEffect(()=>{
+
+    fetch("https://fakestoreapi.com/products")
+    .then((res)=>res.json())
+    .then ((json)=>{
+        setProducts(json)
+    })
+searchInputRef.current.focus()
+},[])
+
+const filteredProducts =  useMemo(()=>{
+    let result = products.filter((product)=>{
+    const macthesSearch = product.title.toLowerCase().includes(search.toLowerCase());
+    
+const matchesCategory = category ==="all" || product.category ===category;
+return macthesSearch && matchesCategory;
+})
+
+
+if(sortOrder === "low_to_high"){
+    result = [...result].sort((a,b)=>a.price - b.price)
+}
+if(sortOrder === "high_to_low"){
+    result = [...result].sort((a,b)=>b.price - a.price)
+}
+return result 
+
+},[products,search,category,sortOrder])
+
+
+return (
+    <div>
+        <select value = {category}     
+     onChange={(e) => setCategory(e.target.value)}
+>
+<option value="all">All</option>    
+<option value="electronics">Electronics</option>
+<option value="jewelery">Jewelery</option>
+<option value="men's clothing">Men's Clothing</option>
+<option value="women's clothing">Women's Clothing</option>
+
+        </select>
+        <select value = {sortOrder}
+        onChange={(e)=> setsortOrder(e.target.value)} > 
+            <option value = "none">DONT SORT</option>
+            <option value ="low_to_high">LOW TO HIGH</option>
+            <option value ="high_to_low">HGH TO LOW</option>
+        </select>
+        <input ref = {searchInputRef} type ="text"
+        placeholder = "enter the city name to search"   
+        value = {search}
+     onChange={(e) => setSearch(e.target.value)}
+      />
+        <h2> Products are as follows</h2>
+    {filteredProducts.map((product)=>(
+    <div key = {product.id}>
+        <h3>{product.title}</h3>
+        <h3>
+            Product price: {product.price}
+        </h3>
+        
         </div>
-    );
-};
-
-function Alert({showAlert}) {
-    return <button onClick={showAlert}>Show Alert</button>
+        
+    ))}
+    <p>{redcerCountRef.current}</p>
+    </div>
+)
 }
 
-export default Assignment2
+
+export default App
+
