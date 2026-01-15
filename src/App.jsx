@@ -205,37 +205,38 @@
 // export default Assignment2 
 
 import {useState} from "react"
-import {useRef} from "react"
 import {useEffect} from "react"
 import {useMemo} from "react"
+import {useRef} from "react"
+
+
+
 
 function App(){
-    const [products,setProducts] =  useState([])
+const [items,setItems] = useState([])
+const searchInputRef = useRef(0)
 const [search,setSearch] = useState("")
-const [category,setCategory] = useState("all")
+const [country,setCountry] = useState("all")
 const [sortOrder,setsortOrder] = useState("none")
-const searchInputRef = useRef(null)
-const redcerCountRef =useRef(0)
-redcerCountRef.current+=1
 
-useEffect(()=>{
 
-    fetch("https://fakestoreapi.com/products")
-    .then((res)=>res.json())
-    .then ((json)=>{
-        setProducts(json)
+
+    useEffect(()=>{
+        fetch("https://free-food-menus-api-two.vercel.app/burgers")
+        .then((res)=>res.json())
+        .then((json)=>{
+setItems(json)
+        })
+// searchInputRef.current.focus()
+    },[])
+
+const FilteredFood = useMemo(()=>{
+    let result = items.filter((item) =>{
+        const itemSearch =item.name.toLowerCase().includes(search.toLowerCase())
+
+        const matchedCountry  = country ==="all" || item.country === country
+        return itemSearch && matchedCountry;
     })
-searchInputRef.current.focus()
-},[])
-
-const filteredProducts =  useMemo(()=>{
-    let result = products.filter((product)=>{
-    const macthesSearch = product.title.toLowerCase().includes(search.toLowerCase());
-    
-const matchesCategory = category ==="all" || product.category ===category;
-return macthesSearch && matchesCategory;
-})
-
 
 if(sortOrder === "low_to_high"){
     result = [...result].sort((a,b)=>a.price - b.price)
@@ -245,48 +246,43 @@ if(sortOrder === "high_to_low"){
 }
 return result 
 
-},[products,search,category,sortOrder])
+    },[items,search,country,sortOrder])
+   
 
 
-return (
-    <div>
-        <select value = {category}     
-     onChange={(e) => setCategory(e.target.value)}
->
-<option value="all">All</option>    
-<option value="electronics">Electronics</option>
-<option value="jewelery">Jewelery</option>
-<option value="men's clothing">Men's Clothing</option>
-<option value="women's clothing">Women's Clothing</option>
+    return (
+        <div>
+            <select value = {country}
+            onChange ={(e)=> setCountry(e.target.value)}>
+<option value ="all">All Countries</option>
+<option value = "New York, NY">New York, NY</option>
+<option value = "St. Helena, CA">St. Helena, CA</option>
+<option value = "Brooklyn, NY">Brooklyn,NY</option>
+<option value = "Minneapolis, MN">Minneapolis, MN</option>
+                 </select>
 
-        </select>
         <select value = {sortOrder}
-        onChange={(e)=> setsortOrder(e.target.value)} > 
-            <option value = "none">DONT SORT</option>
-            <option value ="low_to_high">LOW TO HIGH</option>
-            <option value ="high_to_low">HGH TO LOW</option>
+        onChange = {(e)=> setsortOrder(e.target.value)}>
+        <option value = "none"> Dont SOrt </option>
+        <option value = "low_to_high"> low to high</option>
+        <option value = "high_to_low">High to low</option>
         </select>
-        <input ref = {searchInputRef} type ="text"
-        placeholder = "enter the city name to search"   
-        value = {search}
-     onChange={(e) => setSearch(e.target.value)}
-      />
-        <h2> Products are as follows</h2>
-    {filteredProducts.map((product)=>(
-    <div key = {product.id}>
-        <h3>{product.title}</h3>
-        <h3>
-            Product price: {product.price}
-        </h3>
-        
-        </div>
-        
-    ))}
-    <p>{redcerCountRef.current}</p>
-    </div>
-)
-}
+            <input type ="text" placeholder ="Search Menu " value={search} onChange ={(e)=>setSearch(e.target.value)}></input>
+            <p>
+                Products are as follows:
+                            </p>
 
+                {FilteredFood.map((item)=>(
+                    <div key={item.id}>
+                        <h3>Name :{item.name}</h3>
+                        <h2>Description{item.dsc}</h2>
+                        <h2>Price{item.price}</h2>
+                    </div>
+                ))}
+         
+        </div>
+    )
+}
 
 export default App
 
