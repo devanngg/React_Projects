@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node index.js:*)",
+      "Bash(curl:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(tasklist:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd //c \"taskkill /PID 9788 /F\")",
+      "Bash(for i in {1..7})",
+      "Bash(do echo \"Request $i:\")",
+      "Bash(done)",
+      "Bash(npm install:*)"
+    ]
+  }
+}
